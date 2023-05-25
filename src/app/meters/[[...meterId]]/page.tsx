@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from 'next/navigation';
 import Label from "@/components/Label";
 import { useEffect, useState } from "react";
 import getInstance from "../../../../api";
@@ -19,6 +20,7 @@ interface IPageProps {
 };
 
 const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
+  const router = useRouter();
   const [meterId] = params?.meterId || [''];
   const readonlyMeter = READONLY_METERS.some(readonlyMeterId => readonlyMeterId === meterId);
   const [state, setState] = useState({
@@ -28,6 +30,7 @@ const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
     used_for_billing: false,
     active: true,
   });
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -44,14 +47,25 @@ const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
   }, []);
 
   const handleMeterCreation = () => {
+    setLoading(true);
+
     const actionPromise = meterId ?
       getInstance().put(`/meters/${meterId}`, state) :
       getInstance().post('/meters', state);
 
-    actionPromise.then(data => {
-      console.log({data});
-      console.log("Success! Redirecting to homepage.")
-    }).catch(error => console.log({error}));;
+    actionPromise.then(() => {
+      console.log("Success! Redirecting to homepage.");
+      router.push('/');
+    }).catch(error => console.log({error})).finally(() => setLoading(false));
+  }
+
+  const handleMeterDeletion = () => {
+    setLoading(true);
+
+    getInstance().delete(`/meters/${meterId}`).then(() => {
+      console.log("Success! Redirecting to homepage.");
+      router.push('/');
+    }).catch(error => console.log({error})).finally(() => setLoading(false));
   }
 
   return (
@@ -128,7 +142,8 @@ const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
             {(meterId && !readonlyMeter) ? (
               <button
                 type="button"
-                onClick={handleMeterCreation}
+                disabled={loading}
+                onClick={handleMeterDeletion}
                 className="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mr-4 mb-4"
               >
                 Delete Meter
@@ -137,7 +152,7 @@ const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
             
             <button
               type="button"
-              disabled={readonlyMeter}
+              disabled={loading || readonlyMeter}
               onClick={handleMeterCreation}
               className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
             >

@@ -35,3 +35,12 @@ NEXT_PUBLIC_API_KEY=YOUR-KEY-HERE
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Next steps
+
+There are some rough edges still, the next steps that I would improve on this app would be (in no particular order):
+
+- Improve loading states, create a button component and integrate loading state on it. Add that to the table too.
+- Improve tests, increase coverage and add some cypress tests
+- Improve accessibility and navigation with keyboard, especially on the main table
+- Improve query performance, add caching and some other strategies, especially on the details screen
