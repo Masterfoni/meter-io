@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import Chip from '../Chip';
 
 export interface IMeter {
   id: string;
@@ -71,12 +72,7 @@ const MetersTable: React.FC<ITableProps> = ({
               <span className="text-gray-700">{api_name}</span>
             </td>
             <td className="px-6 py-4">
-              <span
-                className={`inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full bg-indigo-600`}></span>
-                {active ? 'Active' : 'Inactive'}
-              </span>
+              <Chip variant={active ? 'positive' : 'critical'}>{active ? 'Active' : 'Inactive'}</Chip>
             </td>
             <td className="px-6 py-4">{used_for_billing ? 'Yes' : 'No'}</td>
             <td className="px-6 py-4">{type}</td>

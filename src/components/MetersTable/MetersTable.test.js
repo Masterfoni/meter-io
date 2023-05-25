@@ -30,7 +30,7 @@ const MOCK_METERS = [
 ];
 
 describe("MetersTable", () => {
-  it("Renders all the nav anchors", () => {
+  it("Renders MetersTable with data", () => {
     const { getByText, getAllByText } = render(
       <MetersTable meters={MOCK_METERS} />
     );

@@ -1,0 +1,32 @@
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background-color: lightgray;
+
+    &.positive {
+        background-color: #f0fdf4;
+        color: #16a34a;
+    }
+
+    &.critical {
+        background-color: #fef2f2;
+        color: #dc2626;
+    }
+}
+
+.dot {
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    
+    &.positive {
+        background-color: #16a34a;
+    }
+
+    &.critical {
+        background-color: #dc2626;
+    }
+}
