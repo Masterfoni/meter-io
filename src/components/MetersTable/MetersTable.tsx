@@ -16,7 +16,7 @@ const MetersTable: React.FC<ITableProps> = ({
   meters,
 }) => {
 
-  const getActiveColorModifier = (active: boolean) => active ? 'green' : 'red';
+  const getActiveColorModifier = (active: boolean) => active ? 'green' : 'indigo';
 
   return (
     <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">

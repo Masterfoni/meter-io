@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import getInstance from '../../api';
 import MetersTable, { IMeter } from '@/components/MetersTable/MetersTable';
+import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const [meters, setMeters] = useState<IMeter[]>([]);
@@ -14,8 +15,11 @@ export default function Home() {
   }, [])
   
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <MetersTable meters={meters} />
-    </main>
+    <>
+      <Navbar />
+      <main className="flex min-h-screen flex-col gap-4 items-center pl-24 pr-24 pt-12">
+        <MetersTable meters={meters} />
+      </main>
+    </>
   )
 }
