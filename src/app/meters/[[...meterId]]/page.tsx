@@ -1,10 +1,26 @@
 "use client";
 import Label from "@/components/Label";
-import { useState } from "react";
-import getInstance from "../../../api";
+import { useEffect, useState } from "react";
+import getInstance from "../../../../api";
 import Navbar from "@/components/Navbar";
+import { IMeter } from "@/components/MetersTable/MetersTable";
+import Input from "@/components/Input";
 
-const CreateMeterPage = () => {
+const READONLY_METERS = [
+  '0839b368-d3d1-41a3-9938-d4c6df8a3d64',
+  '1634a14b-ecfa-405c-9113-5f71ae99b97a',
+  '3a309982-720c-49b6-a28a-4f5d9d415509',
+];
+
+interface IPageProps {
+  params?: {
+      meterId: string[];
+  };
+};
+
+const MeterDetailsPage: React.FC<IPageProps> = ({ params }) => {
+  const [meterId] = params?.meterId || [''];
+  const readonlyMeter = READONLY_METERS.some(readonlyMeterId => readonlyMeterId === meterId);
   const [state, setState] = useState({
     display_name: '',
     api_name: '',
@@ -13,14 +29,29 @@ const CreateMeterPage = () => {
     active: true,
   });
 
+
+  useEffect(() => {
+    // This is resulting a 404, going with a different approach here
+    // getInstance().get(`/meters/${meterId}`)
+    //   .then(data => console.log({data}))
+    //   .catch(error => console.log({error}));
+    getInstance().get(`/meters`)
+       .then(data => {
+        const meterFound = data.data.find((meter: IMeter) => meter.id === meterId);
+        setState({ ...state, ...meterFound });
+       })
+       .catch(error => console.log({error}));
+  }, []);
+
   const handleMeterCreation = () => {
-    console.log({state});
-    getInstance().post('/meters', state)
-      .then(data => {
-        console.log({data});
-        console.log("meter created with success!")
-      })
-      .catch(error => console.log({error}));;
+    const actionPromise = meterId ?
+      getInstance().put(`/meters/${meterId}`, state) :
+      getInstance().post('/meters', state);
+
+    actionPromise.then(data => {
+      console.log({data});
+      console.log("Success! Redirecting to homepage.")
+    }).catch(error => console.log({error}));;
   }
 
   return (
@@ -31,25 +62,21 @@ const CreateMeterPage = () => {
           <form>
             <div className="mb-6">
               <Label targetField="display_name">Display name</Label>
-              <input
-                type="text"
+              <Input
                 id="display_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 value={state.display_name}
+                disabled={readonlyMeter}
                 onChange={(event) => setState({ ...state, display_name: event.currentTarget.value})}
-                required
               />
             </div>
 
             <div className="mb-6">
               <Label targetField="api_name">Api name</Label>
-              <input
-                type="text"
-                id="display_name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              <Input
+                id="api_name"
                 value={state.api_name}
+                disabled={readonlyMeter}
                 onChange={(event) => setState({ ...state, api_name: event.currentTarget.value})}
-                required
               />
             </div>
             
@@ -57,6 +84,7 @@ const CreateMeterPage = () => {
               <Label targetField="type">Select the type of the meter</Label>
               <select
                 id="type"
+                disabled={readonlyMeter}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 value={state.type}
                 onChange={(event) => setState({ ...state, type: event.currentTarget.value})}
@@ -72,6 +100,7 @@ const CreateMeterPage = () => {
                 <input
                   id="used_for_billing"
                   type="checkbox"
+                  disabled={readonlyMeter}
                   checked={state.used_for_billing}
                   onChange={() => setState({ ...state, used_for_billing: !state.used_for_billing})}
                   className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
@@ -86,6 +115,7 @@ const CreateMeterPage = () => {
                 <input
                   id="active"
                   type="checkbox"
+                  disabled={readonlyMeter}
                   checked={state.active}
                   onChange={() => setState({ ...state, active: !state.active})}
                   className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
@@ -94,13 +124,24 @@ const CreateMeterPage = () => {
               </div>
               <label htmlFor="active" className="ml-2 text-sm font-medium text-gray-900">Active</label>
             </div>
+
+            {(meterId && !readonlyMeter) ? (
+              <button
+                type="button"
+                onClick={handleMeterCreation}
+                className="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center mr-4 mb-4"
+              >
+                Delete Meter
+              </button>
+            ) : null}
             
             <button
               type="button"
+              disabled={readonlyMeter}
               onClick={handleMeterCreation}
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+              className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:bg-gray-500"
             >
-              Submit
+              {meterId ? 'Update Meter' : 'Create Meter'}
             </button>
           </form>
         </div>
@@ -109,4 +150,4 @@ const CreateMeterPage = () => {
   );
 };
 
-export default CreateMeterPage;
+export default MeterDetailsPage;

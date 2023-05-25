@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="flex min-h-screen flex-col gap-4 items-center pl-24 pr-24 pt-12">
+      <main className="flex min-h-screen flex-col gap-4 items-center pl-24 pr-24 pt-12 pb-12">
         <MetersTable meters={meters} />
       </main>
     </>
