@@ -20,8 +20,6 @@ const MetersTable: React.FC<ITableProps> = ({
   const [localMeters, setLocalMeters] = useState(meters);
   const router = useRouter();
 
-  const getActiveColorModifier = (active: boolean) => active ? 'green' : 'indigo';
-
   useEffect(() => {
     setLocalMeters(meters);
   }, [meters])
